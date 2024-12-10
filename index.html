@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تجربة الواقع المعزز - تحسينات تفاعلية</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.rawgit.com/jeromeetienne/ar.js/1.7.2/aframe/build/aframe-ar.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        .info {
+            position: absolute;
+            top: 1px;
+            left: 1px;
+            z-index: 10;
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 1px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+            max-width: 250px;
+            width: 100%;
+        }
+
+        .info button,
+        .info input,
+        .info select {
+            margin: 5px;
+            padding: 10px;
+            background-color: #36383a;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .info button:hover {
+            background-color: #121314;
+        }
+
+        a-image {
+            width: 50vw;
+            height: 75vh;
+            transition: all 0.3s ease-in-out;
+        }
+
+        @media (max-width: 768px) {
+            .info {
+                max-width: 100%;
+                font-size: 14px;
+            }
+
+            a-image {
+                width: 80vw;
+                height: 60vh;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .info {
+                font-size: 12px;
+            }
+
+            a-image {
+                width: 90vw;
+                height: 50vh;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="info">
+        <label>اختر رقم الموديل:</label>
+        <input type="number" id="modelNumber" min="1" max="100" value="1">
+        <button onclick="loadModel()">تحميل الموديل</button>
+
+        <label>تدوير الستارة:</label>
+        <button onclick="rotateCurtain('left')">تدوير لليسار</button>
+        <button onclick="rotateCurtain('right')">تدوير لليمين</button>
+
+        <label>تغيير اللون:</label>
+        <select id="colorPicker" onchange="changeColor()">
+            <option value="none">بدون تعديل</option>
+            <option value="#ff0000">أحمر</option>
+            <option value="#0000ff">أزرق</option>
+            <option value="#00ff00">أخضر</option>
+            <option value="#ff00ff">بنفسجي</option>
+            <option value="#ffffff">أبيض</option>
+        </select>
+
+        <button onclick="resetCurtain()">إعادة تعيين</button>
+    </div>
+
+    <a-scene embedded arjs>
+        <a-image id="curtain" position="0 1.5 -3" rotation="0 0 0" src="models/curtain1.png">
+        </a-image>
+        <a-light type="directional" position="0 2 3" intensity="1.5" castShadow="true"></a-light>
+
+        <a-marker-camera preset="hiro"></a-marker-camera>
+    </a-scene>
+
+    <script>
+        let originalRotation = '0 0 0'; // حفظ الوضع الافتراضي للدوران
+        let originalColor = 'white'; // حفظ اللون الافتراضي
+
+        // تحميل الموديل
+        function loadModel() {
+            const modelNumber = document.getElementById('modelNumber').value;
+            const curtain = document.getElementById('curtain');
+            const imagePath = `models/curtain${modelNumber}.png`; // صورة مع خلفية شفافة
+            curtain.setAttribute('src', imagePath);
+
+            // إعادة تعيين اللون والزاوية عند تغيير الموديل
+            curtain.setAttribute('rotation', originalRotation);
+            curtain.setAttribute('material', `color: ${originalColor}`);
+        }
+
+        // تدوير الستارة
+        function rotateCurtain(direction) {
+            const curtain = document.getElementById('curtain');
+            const rotation = curtain.getAttribute('rotation');
+            let y = rotation.y;
+
+            if (direction === 'left') {
+                y -= 10;
+            } else if (direction === 'right') {
+                y += 10;
+            }
+
+            curtain.setAttribute('rotation', `0 ${y} 0`);
+        }
+
+        // تغيير اللون
+        function changeColor() {
+            const color = document.getElementById('colorPicker').value;
+            const curtain = document.getElementById('curtain');
+
+            if (color === 'none') {
+                curtain.setAttribute('material', `color: ${originalColor}`);
+            } else {
+                curtain.setAttribute('material', `color: ${color}`);
+            }
+        }
+
+        // إعادة تعيين الستارة إلى الوضع الافتراضي
+        function resetCurtain() {
+            const curtain = document.getElementById('curtain');
+            curtain.setAttribute('rotation', originalRotation);
+            curtain.setAttribute('material', `color: ${originalColor}`);
+            document.getElementById('modelNumber').value = 1;
+        }
+    </script>
+</body>
+
+</html>
