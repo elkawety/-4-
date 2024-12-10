@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تجربة الواقع المعزز - تحكم كامل</title>
+    <title>تجربة الواقع المعزز - تحكم حر</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://cdn.rawgit.com/jeromeetienne/ar.js/1.7.2/aframe/build/aframe-ar.min.js"></script>
     <style>
@@ -37,8 +37,7 @@
         }
 
         .info button,
-        .info input,
-        .info select {
+        .info input {
             margin: 5px 0;
             padding: 5px;
             background-color: #007bff;
@@ -86,8 +85,7 @@
         <button onclick="loadModel()">تحميل الموديل</button>
 
         <label>تدوير الستارة:</label>
-        <button onclick="rotateCurtain('left')">يسار 90°</button>
-        <button onclick="rotateCurtain('right')">يمين 90°</button>
+        <input type="range" id="rotationSlider" min="-180" max="180" value="0" oninput="rotateCurtain()">
 
         <label>تحريك:</label>
         <button onclick="moveCurtain('up')">أعلى</button>
@@ -115,18 +113,10 @@
             curtain.setAttribute('src', `models/${modelNumber}.png`);
         }
 
-        // تدوير الستارة
-        function rotateCurtain(direction) {
-            const rotation = curtain.getAttribute('rotation');
-            let y = rotation.y;
-
-            if (direction === 'left') {
-                y -= 90; // زاوية الدوران
-            } else if (direction === 'right') {
-                y += 90;
-            }
-
-            curtain.setAttribute('rotation', `0 ${y} 0`);
+        // تدوير الستارة بحرية
+        function rotateCurtain() {
+            const rotationValue = document.getElementById('rotationSlider').value;
+            curtain.setAttribute('rotation', `0 ${rotationValue} 0`);
         }
 
         // تحريك الستارة
@@ -152,7 +142,7 @@
                 y += 0.1;
                 z += 0.1;
             } else if (action === 'decrease') {
-                x = Math.max(0.1, x - 0.1); // منع الحجم السلبي
+                x = Math.max(0.1, x - 0.1);
                 y = Math.max(0.1, y - 0.1);
                 z = Math.max(0.1, z - 0.1);
             }
