@@ -12,6 +12,7 @@
             margin: 0;
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
+            overflow: hidden; /* منع التمرير لتحسين العرض على الهواتف */
         }
 
         .info {
@@ -20,12 +21,12 @@
             left: 50%;
             transform: translateX(-50%);
             z-index: 10;
-            background-color: rgba(255, 255, 255, 0.7);
-            padding: 10px;
-            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 8px;
+            border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             width: 90%;
-            max-width: 300px;
+            max-width: 280px;
             text-align: center;
         }
 
@@ -45,7 +46,7 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             width: 100%;
             box-sizing: border-box;
         }
@@ -60,12 +61,24 @@
 
         a-image {
             transition: all 0.3s ease-in-out;
+            width: 80vw;
+            height: 60vh;
         }
 
         @media (max-width: 768px) {
             .info {
-                padding: 8px;
+                padding: 6px;
                 font-size: 0.8rem;
+            }
+
+            .info button,
+            .info input {
+                font-size: 0.75rem;
+            }
+
+            a-image {
+                width: 90vw;
+                height: 70vh;
             }
         }
 
@@ -74,13 +87,23 @@
                 padding: 5px;
                 font-size: 0.7rem;
             }
+
+            .info button,
+            .info input {
+                font-size: 0.7rem;
+            }
+
+            a-image {
+                width: 95vw;
+                height: 75vh;
+            }
         }
     </style>
 </head>
 
 <body>
     <div class="info">
-        <label>اختر رقم الموديل:</label>
+        <label>الكويتي:</label>
         <input type="number" id="modelNumber" min="1" max="100" value="1">
         <button onclick="loadModel()">تحميل الموديل</button>
 
