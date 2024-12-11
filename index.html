@@ -35,10 +35,18 @@
         }
 
         .info h2 {
-            margin: 0 0 10px;
-            font-size: 1.2rem;
-            color: #333;
+            margin: 0 0 20px;
+            font-size: 1.5rem;
+            color: #007bff;
             text-decoration: underline;
+            font-weight: bold;
+        }
+
+        .info label {
+            font-size: 1rem;
+            color: #333;
+            margin: 10px 0;
+            display: block;
         }
 
         .info button,
@@ -89,6 +97,10 @@
             .info input {
                 font-size: 0.8rem;
             }
+
+            .info h2 {
+                font-size: 1.3rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -100,6 +112,10 @@
             .info input {
                 font-size: 0.7rem;
             }
+
+            .info h2 {
+                font-size: 1.1rem;
+            }
         }
     </style>
 </head>
@@ -108,7 +124,11 @@
     <button class="toggle-button" onclick="toggleMenu()">☰ القائمة</button>
 
     <div class="info" id="controlMenu">
-        <h2>أحمد الكويتي</h2>
+        <h2>الكويتي</h2>
+
+        <label>اختر رقم الموديل:</label>
+        <input type="number" id="modelNumber" min="1" max="100" value="1">
+        <button onclick="loadModel()">تحميل الموديل</button>
 
         <label>تدوير الستارة:</label>
         <input type="range" id="rotationSlider" min="-180" max="180" value="0" oninput="rotateCurtain()">
@@ -137,6 +157,12 @@
     <script>
         const curtain = document.getElementById('curtain');
         const controlMenu = document.getElementById('controlMenu');
+
+        // تحميل الموديل
+        function loadModel() {
+            const modelNumber = document.getElementById('modelNumber').value;
+            curtain.setAttribute('src', `models/${modelNumber}.png`);
+        }
 
         // تدوير الستارة بحرية
         function rotateCurtain() {
