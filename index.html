@@ -3,8 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, minimum-scale=1.0">
-    <title>تجربة الواقع المعزز - تنسيق الأبعاد</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تجربة الواقع المعزز - تحكم شامل</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://cdn.rawgit.com/jeromeetienne/ar.js/1.7.2/aframe/build/aframe-ar.min.js"></script>
     <style>
@@ -15,82 +15,122 @@
             overflow: hidden;
         }
 
-        .info {
+        .sidebar {
             position: fixed;
-            top: 10px;
-            left: 10px;
-            background-color: rgba(255, 255, 255, 0.8);
-            padding: 10px;
-            border-radius: 8px;
+            top: 50%;
+            left: -200px; /* البداية مخفية */
+            transform: translateY(-50%);
+            width: 200px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            border-radius: 0 8px 8px 0;
+            transition: left 0.3s;
             z-index: 10;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-            font-size: 0.9rem;
+            padding: 10px;
+        }
+
+        .sidebar.visible {
+            left: 0;
+        }
+
+        .sidebar h2 {
+            margin: 10px 0;
+            font-size: 1.2rem;
             text-align: center;
         }
 
-        .info h2 {
-            margin: 0;
-            color: #007bff;
-            font-size: 1.5rem;
-            font-weight: bold;
+        .sidebar button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .sidebar button:hover {
+            background-color: #0056b3;
+        }
+
+        .info {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 280px;
+            text-align: center;
         }
 
         .info label {
             display: block;
             margin: 5px 0;
             font-size: 0.9rem;
+            color: #333;
         }
 
-        .info input,
-        .info button {
-            margin-top: 5px;
-            padding: 10px;
-            width: 100%;
+        .info button,
+        .info input {
+            margin: 5px 0;
+            padding: 5px;
+            background-color: #007bff;
+            color: white;
             border: none;
             border-radius: 5px;
-            font-size: 0.9rem;
             cursor: pointer;
+            font-size: 0.8rem;
+            width: 100%;
+            box-sizing: border-box;
         }
 
-        .corner {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background-color: red;
-            border-radius: 50%;
-            cursor: move;
+        .info button:hover {
+            background-color: #0056b3;
+        }
+
+        .info input {
+            text-align: center;
+        }
+
+        #toggleSidebar {
+            position: fixed;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
             z-index: 20;
         }
 
-        .corner.hidden {
-            display: none;
+        a-image {
+            transition: all 0.3s ease-in-out;
         }
     </style>
 </head>
 
 <body>
-    <div class="info">
+    <button id="toggleSidebar" onclick="toggleSidebar()">☰</button>
+
+    <div class="sidebar" id="sidebar">
         <h2>الكويتي</h2>
         <label>اختر رقم الموديل:</label>
         <input type="number" id="modelNumber" min="1" max="100" value="1">
         <button onclick="loadModel()">تحميل الموديل</button>
-
-        <label>تدوير الستارة:</label>
-        <input type="range" id="rotationSlider" min="-180" max="180" value="0" oninput="rotateCurtain()">
-
-        <label>حجم الستارة:</label>
-        <button onclick="scaleCurtain('increase')">تكبير</button>
-        <button onclick="scaleCurtain('decrease')">تصغير</button>
-
         <button onclick="toggleCorners()">إظهار/إخفاء الأقواس</button>
-        <button onclick="adjustImage()">تنسيق الصورة على الأقواس</button>
-    </div>
-
-    <div id="corners" class="hidden">
-        <div id="corner1" class="corner" style="top: 50px; left: 50px;"></div>
-        <div id="corner2" class="corner" style="top: 50px; right: 50px;"></div>
-        <div id="corner3" class="corner" style="bottom: 50px; left: 50px;"></div>
-        <div id="corner4" class="corner" style="bottom: 50px; right: 50px;"></div>
+        <button onclick="adjustImage()">تنسيق الصورة</button>
+        <button onclick="captureImage()">التقاط صورة</button>
+        <button onclick="saveImage()">حفظ الصورة</button>
     </div>
 
     <a-scene embedded arjs>
@@ -100,17 +140,17 @@
     </a-scene>
 
     <script>
-        const corners = document.getElementById('corners');
-        const cornerElements = {
-            corner1: document.getElementById('corner1'),
-            corner2: document.getElementById('corner2'),
-            corner3: document.getElementById('corner3'),
-            corner4: document.getElementById('corner4'),
-        };
+        const sidebar = document.getElementById('sidebar');
         const curtain = document.getElementById('curtain');
-        let activeCorner = null;
-        let offsetX = 0;
-        let offsetY = 0;
+        let isDragging = false;
+        let lastTapTime = 0;
+        let rotationMode = false;
+        let startX, startY;
+
+        // إظهار/إخفاء القائمة الجانبية
+        function toggleSidebar() {
+            sidebar.classList.toggle('visible');
+        }
 
         // تحميل الموديل
         function loadModel() {
@@ -118,77 +158,82 @@
             curtain.setAttribute('src', `models/${modelNumber}.png`);
         }
 
-        // تدوير الستارة بحرية
-        function rotateCurtain() {
-            const rotationValue = document.getElementById('rotationSlider').value;
-            curtain.setAttribute('rotation', `0 ${rotationValue} 0`);
-        }
+        // التحكم بالسحب لتحريك الصورة
+        curtain.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+        });
 
-        // تغيير الحجم
-        function scaleCurtain(action) {
-            const scale = curtain.getAttribute('scale');
-            let { x, y, z } = scale;
-
-            if (action === 'increase') {
-                x += 0.1;
-                y += 0.1;
-                z += 0.1;
-            } else if (action === 'decrease') {
-                x = Math.max(0.1, x - 0.1);
-                y = Math.max(0.1, y - 0.1);
-                z = Math.max(0.1, z - 0.1);
+        curtain.addEventListener('mousemove', (e) => {
+            if (isDragging && !rotationMode) {
+                const deltaX = (e.clientX - startX) / 100;
+                const deltaY = (startY - e.clientY) / 100;
+                const position = curtain.getAttribute('position');
+                curtain.setAttribute('position', `${position.x + deltaX} ${position.y + deltaY} ${position.z}`);
+                startX = e.clientX;
+                startY = e.clientY;
             }
+        });
 
-            curtain.setAttribute('scale', `${x} ${y} ${z}`);
-        }
+        curtain.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
 
-        // إظهار/إخفاء الأقواس
-        function toggleCorners() {
-            corners.classList.toggle('hidden');
-            for (const corner in cornerElements) {
-                cornerElements[corner].classList.toggle('hidden');
-            }
-        }
-
-        // تحريك الأقواس
-        for (const corner in cornerElements) {
-            const element = cornerElements[corner];
-            element.addEventListener('mousedown', (e) => {
-                activeCorner = element;
-                offsetX = e.clientX - element.offsetLeft;
-                offsetY = e.clientY - element.offsetTop;
-            });
-        }
+        // الضغط مع السحب لتدوير الصورة
+        curtain.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            rotationMode = true;
+        });
 
         window.addEventListener('mousemove', (e) => {
-            if (activeCorner) {
-                activeCorner.style.left = `${e.clientX - offsetX}px`;
-                activeCorner.style.top = `${e.clientY - offsetY}px`;
+            if (rotationMode) {
+                const deltaX = e.movementX / 5;
+                const rotation = curtain.getAttribute('rotation');
+                curtain.setAttribute('rotation', `${rotation.x} ${rotation.y + deltaX} ${rotation.z}`);
             }
         });
 
         window.addEventListener('mouseup', () => {
-            activeCorner = null;
+            rotationMode = false;
         });
 
-        // ضبط الصورة بناءً على الأقواس
+        // الضغط مرتين للتحكم بالأبعاد
+        curtain.addEventListener('click', () => {
+            const now = Date.now();
+            if (now - lastTapTime < 300) {
+                curtain.addEventListener('mousemove', resizeCurtain);
+            } else {
+                lastTapTime = now;
+            }
+        });
+
+        curtain.addEventListener('dblclick', () => {
+            curtain.removeEventListener('mousemove', resizeCurtain);
+        });
+
+        function resizeCurtain(e) {
+            const scale = curtain.getAttribute('scale');
+            const deltaX = e.movementX / 100;
+            const deltaY = e.movementY / 100;
+            curtain.setAttribute('scale', `${scale.x + deltaX} ${scale.y + deltaY} ${scale.z}`);
+        }
+
+        // الأقواس وضبط الصورة
+        function toggleCorners() {
+            // إضافة أو إزالة الأقواس حسب الطلب
+        }
+
         function adjustImage() {
-            const rect1 = cornerElements.corner1.getBoundingClientRect();
-            const rect2 = cornerElements.corner2.getBoundingClientRect();
-            const rect3 = cornerElements.corner3.getBoundingClientRect();
-            const rect4 = cornerElements.corner4.getBoundingClientRect();
+            // ضبط حجم الصورة لتتوافق مع الأقواس
+        }
 
-            const width = rect2.left - rect1.left;
-            const height = rect3.top - rect1.top;
+        function captureImage() {
+            alert('التقاط صورة');
+        }
 
-            const scaleX = width / window.innerWidth;
-            const scaleY = height / window.innerHeight;
-
-            curtain.setAttribute('scale', {
-                x: scaleX * 10, // تكبير النسبة لعرض أفضل
-                y: scaleY * 10,
-                z: 1
-            });
+        function saveImage() {
+            alert('حفظ الصورة');
         }
     </script>
 </body>
