@@ -13,7 +13,7 @@ body {
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-    max-width: 10%;
+    max-width: 15%; /* تعديل لتناسب الهواتف */
 }
 
 .info h2 {
@@ -49,4 +49,53 @@ body {
 .model-thumbnail:hover {
     transform: scale(1.1);
     border-color: #010202;
+}
+
+/* تحسين التناسق على الشاشات الصغيرة */
+@media (max-width: 768px) {
+    .info {
+        max-width: 40%;
+        left: 5px;
+        top: 5px;
+        padding: 10px;
+    }
+
+    .info input,
+    .info button {
+        font-size: 12px;
+        padding: 4px;
+    }
+
+    #modelGallery {
+        gap: 4px;
+    }
+
+    .model-thumbnail {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .info {
+        max-width: 80%;
+        left: 5px;
+        top: 5px;
+        padding: 8px;
+    }
+
+    .info input,
+    .info button {
+        font-size: 10px;
+        padding: 3px;
+    }
+
+    #modelGallery {
+        gap: 3px;
+    }
+
+    .model-thumbnail {
+        width: 30px;
+        height: 30px;
+    }
 }
