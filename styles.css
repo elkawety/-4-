@@ -41,7 +41,7 @@ body {
 .model-thumbnail {
     width: 50px;
     height: 50px;
-    border: 1px solid #30a05b;
+    border: 1px solid #f01f10;
     border-radius: 4px;
     cursor: pointer;
     transition: transform 0.2s ease;
@@ -56,66 +56,65 @@ body {
 @media (max-width: 768px) {
     .info {
         max-width: 40%;
+        /* تقليل العرض للأجهزة المتوسطة */
         left: 5px;
+        /* ضبط المسافة عن الحافة اليسرى */
         top: 5px;
+        /* ضبط المسافة عن الحافة العلوية */
         padding: 10px;
+        /* تقليل الحشو */
     }
 
     .info input,
     .info button {
         font-size: 12px;
+        /* تصغير حجم النص */
         padding: 4px;
+        /* تقليل التباعد الداخلي */
     }
 
     #modelGallery {
         gap: 4px;
+        /* تقليل المسافات بين الصور */
     }
 
     .model-thumbnail {
         width: 40px;
+        /* تصغير العرض */
         height: 40px;
-    }
-}
-
-/* تحسين التناسق للشاشات الصغيرة */
-@media (max-width: 768px) {
-    .controls {
-        flex-direction: column;
-        gap: 5px;
-    }
-
-    .controls button {
-        font-size: 14px;
-        padding: 8px 10px;
-        width: 100%;
-    }
-
-    .control-section {
-        max-width: 100%;
-        width: 95%;
-        font-size: 14px;
-        padding: 10px;
-    }
-
-    .model-thumbnail {
-        width: 40px;
-        height: 40px;
+        /* تصغير الارتفاع */
     }
 }
 
 @media (max-width: 480px) {
-    .controls button {
-        font-size: 12px;
-        padding: 5px 8px;
+    .info {
+        max-width: 80%;
+        /* تكبير العرض للأجهزة الصغيرة */
+        left: 5px;
+        /* ضبط المسافة عن الحافة اليسرى */
+        top: 5px;
+        /* ضبط المسافة عن الحافة العلوية */
+        padding: 8px;
+        /* تقليل الحشو */
     }
 
-    .control-section {
-        font-size: 12px;
-        padding: 8px;
+    .info input,
+    .info button {
+        font-size: 10px;
+        /* تصغير النص أكثر للأجهزة الصغيرة */
+        padding: 3px;
+        /* تقليل التباعد الداخلي */
+    }
+
+    #modelGallery {
+        gap: 3px;
+        /* تقليل المسافات بين الصور */
     }
 
     .model-thumbnail {
         width: 30px;
+        /* تصغير العرض */
         height: 30px;
+        /* تصغير الارتفاع */
     }
 }
