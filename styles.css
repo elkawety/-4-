@@ -1,3 +1,4 @@
+/* القيم الافتراضية */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -13,12 +14,8 @@ body {
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-    max-width: 15%;
-    /* تعديل لتناسب الهواتف */
-}
-
-.info h2 {
-    margin-top: 0;
+    max-width: 20%;
+    /* افتراضي للشاشات الكبيرة */
 }
 
 .info input,
@@ -26,7 +23,7 @@ body {
     margin: 5px 0;
     padding: 5px;
     width: 100%;
-    border: 1px solid #23dfec;
+    border: 1px solid #141313;
     border-radius: 4px;
     font-size: 14px;
 }
@@ -41,7 +38,7 @@ body {
 .model-thumbnail {
     width: 50px;
     height: 50px;
-    border: 1px solid #f01f10;
+    border: 1px solid #0c0c0c;
     border-radius: 4px;
     cursor: pointer;
     transition: transform 0.2s ease;
@@ -49,18 +46,18 @@ body {
 
 .model-thumbnail:hover {
     transform: scale(1.1);
-    border-color: #07ffff;
+    border-color: #010202;
 }
 
-/* تحسين التناسق على الشاشات الصغيرة */
+/* تحسين التناسق للشاشات المتوسطة */
 @media (max-width: 768px) {
     .info {
-        max-width: 40%;
-        /* تقليل العرض للأجهزة المتوسطة */
-        left: 5px;
-        /* ضبط المسافة عن الحافة اليسرى */
-        top: 5px;
-        /* ضبط المسافة عن الحافة العلوية */
+        max-width: 50%;
+        /* تقليل العرض */
+        left: 5%;
+        /* وسط الشاشة */
+        top: 5%;
+        /* من الأعلى */
         padding: 10px;
         /* تقليل الحشو */
     }
@@ -68,9 +65,9 @@ body {
     .info input,
     .info button {
         font-size: 12px;
-        /* تصغير حجم النص */
+        /* تقليل حجم النص */
         padding: 4px;
-        /* تقليل التباعد الداخلي */
+        /* تقليل الحواف */
     }
 
     #modelGallery {
@@ -80,20 +77,21 @@ body {
 
     .model-thumbnail {
         width: 40px;
-        /* تصغير العرض */
+        /* تصغير حجم الصور */
         height: 40px;
         /* تصغير الارتفاع */
     }
 }
 
+/* تحسين التناسق للشاشات الصغيرة جدًا */
 @media (max-width: 480px) {
     .info {
-        max-width: 80%;
-        /* تكبير العرض للأجهزة الصغيرة */
-        left: 5px;
-        /* ضبط المسافة عن الحافة اليسرى */
-        top: 5px;
-        /* ضبط المسافة عن الحافة العلوية */
+        max-width: 90%;
+        /* جعل العرض يشغل الشاشة تقريبًا */
+        left: 5%;
+        /* توسيط العنصر أفقيًا */
+        top: 5%;
+        /* توسيط العنصر رأسيًا */
         padding: 8px;
         /* تقليل الحشو */
     }
@@ -101,20 +99,22 @@ body {
     .info input,
     .info button {
         font-size: 10px;
-        /* تصغير النص أكثر للأجهزة الصغيرة */
+        /* تقليل النصوص */
         padding: 3px;
-        /* تقليل التباعد الداخلي */
+        /* تقليل الحواف */
     }
 
     #modelGallery {
         gap: 3px;
-        /* تقليل المسافات بين الصور */
+        /* تقليل المسافات */
+        justify-content: center;
+        /* توسيط الصور */
     }
 
     .model-thumbnail {
         width: 30px;
-        /* تصغير العرض */
+        /* تقليل الحجم أكثر */
         height: 30px;
-        /* تصغير الارتفاع */
+        /* تقليل الارتفاع */
     }
 }
