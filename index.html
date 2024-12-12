@@ -4,238 +4,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تجربة الواقع المعزز - تحكم شامل</title>
+    <title>تحكم كامل بالستارة</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://cdn.rawgit.com/jeromeetienne/ar.js/1.7.2/aframe/build/aframe-ar.min.js"></script>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            overflow: hidden;
-        }
-
-        .sidebar {
-            position: fixed;
-            top: 50%;
-            left: -200px;
-            transform: translateY(-50%);
-            width: 200px;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            border-radius: 0 8px 8px 0;
-            transition: left 0.3s;
-            z-index: 10;
-            padding: 10px;
-        }
-
-        .sidebar.visible {
-            left: 0;
-        }
-
-        .sidebar h2 {
-            margin: 10px 0;
-            font-size: 1.2rem;
-            text-align: center;
-        }
-
-        .sidebar button {
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .sidebar button:hover {
-            background-color: #0056b3;
-        }
-
-        .info {
-            position: fixed;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 20;
-            background-color: rgba(255, 255, 255, 0.8);
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            width: 90%;
-            max-width: 280px;
-            text-align: center;
-        }
-
-        .info label {
-            display: block;
-            margin: 5px 0;
-            font-size: 0.9rem;
-            color: #333;
-        }
-
-        .info button,
-        .info input {
-            margin: 5px 0;
-            padding: 5px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .info button:hover {
-            background-color: #0056b3;
-        }
-
-        .info input {
-            text-align: center;
-        }
-
-        #toggleSidebar {
-            position: fixed;
-            top: 50%;
-            left: 0;
-            transform: translateY(-50%);
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 0 8px 8px 0;
-            cursor: pointer;
-            z-index: 20;
-        }
-
-        a-image {
-            transition: all 0.3s ease-in-out;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <button id="toggleSidebar" onclick="toggleSidebar()">☰</button>
+    <div class="info">
+        <h2>إعدادات الستارة</h2>
 
-    <div class="sidebar" id="sidebar">
-        <h2>الكويتي</h2>
-        <label>اختر رقم الموديل:</label>
-        <input type="number" id="modelNumber" min="1" max="100" value="1">
-        <button onclick="loadModel()">تحميل الموديل</button>
-        <button onclick="toggleCorners()">إظهار/إخفاء الأقواس</button>
-        <button onclick="adjustImage()">تنسيق الصورة</button>
-        <button onclick="captureImage()">التقاط صورة</button>
-        <button onclick="saveImage()">حفظ الصورة</button>
+        <!-- التحكم في اختيار الموديل -->
+        <label>اختر الموديل:</label>
+        <div id="modelGallery"></div>
+
+        <!-- التحكم في الألوان -->
+        <label>تغيير اللون:</label>
+        <input type="color" id="colorPicker" onchange="applyCustomColor()">
+
+        <!-- التحكم في الأبعاد -->
+        <label>الحجم:</label>
+        <input type="range" id="scaleSlider" min="0.5" max="2" step="0.1" value="1" onchange="changeScale()">
+
+        <!-- التحكم في الموقع -->
+        <label>الموقع:</label>
+        <input type="range" id="positionX" min="-5" max="5" step="0.1" value="0" onchange="changePosition('x')">
+        <input type="range" id="positionY" min="0" max="5" step="0.1" value="1.5" onchange="changePosition('y')">
+        <input type="range" id="positionZ" min="-5" max="5" step="0.1" value="-3" onchange="changePosition('z')">
+
+        <!-- التحكم في الدوران -->
+        <label>الدوران:</label>
+        <input type="range" id="rotationY" min="0" max="360" step="5" value="0" onchange="changeRotation()">
     </div>
 
     <a-scene embedded arjs>
+        <!-- صورة الستارة -->
         <a-image id="curtain" position="0 1.5 -3" rotation="0 0 0" scale="1 1 1" src="models/1.png"></a-image>
-        <a-light type="directional" position="0 2 3" intensity="1.5"></a-light>
+
+        <!-- كاميرا الواقع المعزز -->
         <a-marker-camera preset="hiro"></a-marker-camera>
     </a-scene>
 
-    <script>
-        const sidebar = document.getElementById('sidebar');
-        const curtain = document.getElementById('curtain');
-        let isDragging = false;
-        let lastTapTime = 0;
-        let rotationMode = false;
-        let startX, startY;
-
-        // إظهار/إخفاء القائمة الجانبية
-        function toggleSidebar() {
-            sidebar.classList.toggle('visible');
-        }
-
-        // تحميل الموديل
-        function loadModel() {
-            const modelNumber = document.getElementById('modelNumber').value;
-            curtain.setAttribute('src', `models/${modelNumber}.png`);
-        }
-
-        // التحكم بالسحب لتحريك الصورة
-        curtain.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            startX = e.clientX;
-            startY = e.clientY;
-        });
-
-        curtain.addEventListener('mousemove', (e) => {
-            if (isDragging && !rotationMode) {
-                const deltaX = (e.clientX - startX) / 100;
-                const deltaY = (startY - e.clientY) / 100;
-                const position = curtain.getAttribute('position');
-                curtain.setAttribute('position', `${position.x + deltaX} ${position.y + deltaY} ${position.z}`);
-                startX = e.clientX;
-                startY = e.clientY;
-            }
-        });
-
-        curtain.addEventListener('mouseup', () => {
-            isDragging = false;
-        });
-
-        // الضغط مع السحب لتدوير الصورة
-        curtain.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            rotationMode = true;
-        });
-
-        window.addEventListener('mousemove', (e) => {
-            if (rotationMode) {
-                const deltaX = e.movementX / 5;
-                const rotation = curtain.getAttribute('rotation');
-                curtain.setAttribute('rotation', `${rotation.x} ${rotation.y + deltaX} ${rotation.z}`);
-            }
-        });
-
-        window.addEventListener('mouseup', () => {
-            rotationMode = false;
-        });
-
-        // الضغط مرتين للتحكم بالأبعاد
-        curtain.addEventListener('click', () => {
-            const now = Date.now();
-            if (now - lastTapTime < 300) {
-                curtain.addEventListener('mousemove', resizeCurtain);
-            } else {
-                lastTapTime = now;
-            }
-        });
-
-        curtain.addEventListener('dblclick', () => {
-            curtain.removeEventListener('mousemove', resizeCurtain);
-        });
-
-        function resizeCurtain(e) {
-            const scale = curtain.getAttribute('scale');
-            const deltaX = e.movementX / 100;
-            const deltaY = e.movementY / 100;
-            curtain.setAttribute('scale', `${scale.x + deltaX} ${scale.y + deltaY} ${scale.z}`);
-        }
-
-        // الأقواس وضبط الصورة
-        function toggleCorners() {
-            // إضافة أو إزالة الأقواس حسب الطلب
-        }
-
-        function adjustImage() {
-            // ضبط حجم الصورة لتتوافق مع الأقواس
-        }
-
-        function captureImage() {
-            alert('التقاط صورة');
-        }
-
-        function saveImage() {
-            alert('حفظ الصورة');
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 
 </html>
